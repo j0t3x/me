@@ -174,4 +174,4 @@ Shape.prototype.setId = function( id ){
 
 };
 
-exports.Shape = Shape;
+module.exports = Shape;

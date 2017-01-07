@@ -1,4 +1,4 @@
-var Shape = require('./Shape.js').Shape;
+var Shape = require('./Shape.js');
 
 var ButtonShape = function( buttonText, id ){
   Shape.call( this, 'button', id );
@@ -42,4 +42,4 @@ ButtonShape.prototype.render_ = function(){
 
 
 
-exports.ButtonShape = ButtonShape;
+module.exports = ButtonShape;

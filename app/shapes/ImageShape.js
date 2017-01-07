@@ -1,4 +1,4 @@
-var Shape = require('./Shape.js').Shape;
+var Shape = require('./Shape.js');
 
 var ImageShape = function( src, id ){
   Shape.call( this, 'img', id );
@@ -77,4 +77,4 @@ ImageShape.prototype.setWHpx = function( w, h ){
 
 };
 
-exports.ImageShape = ImageShape;
+module.exports = ImageShape;

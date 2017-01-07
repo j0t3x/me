@@ -1,4 +1,4 @@
-var Shape = require('./Shape.js').Shape;
+var Shape = require('./Shape.js');
 
 var TextShape = function( elem, id ){
   Shape.call( this, elem, id );
@@ -45,4 +45,4 @@ TextShape.prototype.render_ = function(){
 };
 
 
-exports.TextShape = TextShape;
+module.exports = TextShape;

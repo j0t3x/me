@@ -1,4 +1,4 @@
-var Shape = require('../shapes/Shape.js').Shape;
+var Shape = require('../shapes/Shape.js');
 
 var Router = function(){
      
@@ -80,4 +80,4 @@ Router.prototype._repairSlashes = function( word ){
 };
 
 
-exports.Router = Router;
+module.exports = Router;

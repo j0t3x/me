@@ -1,4 +1,4 @@
-var Shape = require('./Shape.js').Shape;
+var Shape = require('./Shape.js');
 
 var OptionShape = function( name, type ){
      
@@ -113,4 +113,4 @@ OptionShape.prototype.render_ = function(){
 };
 
 
-exports.OptionShape = OptionShape;
+module.exports = OptionShape;
