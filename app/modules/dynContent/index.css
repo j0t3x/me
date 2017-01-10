@@ -1,0 +1,25 @@
+.contentFixed {
+	color: white;
+	position: fixed;
+	left: 25%;
+	top: 35%;
+}
+
+.name {
+	font-size: 3em;
+	color: #fff;
+	margin: 0;
+}
+
+.desc {
+	margin: 0;
+}
+
+.lTo {
+	color: #eeeeee;
+	margin-right: 20px;
+}
+
+.inline {
+	
+}
