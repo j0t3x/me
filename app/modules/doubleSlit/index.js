@@ -29,30 +29,38 @@ var doubleSlit = function( canvas ){
 	this.xMaxes = 4;
 	this.distancesToXMax = [];
 
-	this.particleNum = 4000;
+	this.particleNum = 3000;
 	this.particles = [];
+	this.particlesWithChangesToBeDone = [];
 
 	//animation values
-	this.WANTED_FPS = 60;
+	this.WANTED_FPS = 24;
 	this.WANTED_FRAME_TIME = 1000 / this.WANTED_FPS;
 	this.CURRENT_FRAME_COUNT = 0;
-	this.last_time = 0;
+	this.last_render = 0;
 	this.stop_anim = false;
 	this.delta = 0;
 	this.now = 0;
+
+	this.MAX_OPACITY = 0.4;
+	this.gradient;
 
 }
 
 doubleSlit.prototype.init = function(){
 
 	this.setProblemVars();
+
+	window.addEventListener( 'resize', this.onResizeWindow.bind(this) );
 	for (var i = 0; i < this.xMaxes; i++) {
 		this.distancesToXMax[i] = this.calculateMaxDistanceFromCenterMax( i );
 	}
 
 	for (var i = 0; i < this.particleNum; i++) {
-		this.createParticle();
+		this.createParticle( this.MAX_OPACITY );
 	}
+
+	this.setGradient();
 
 	this.update( 0 );
 
@@ -79,18 +87,20 @@ doubleSlit.prototype.calculateMaxDistanceFromCenterMax = function( max ){
 
 doubleSlit.prototype.drawCircleInXMax = function( p ){
 
+	this.ctx.save();
 	this.ctx.beginPath();
 	this.ctx.arc(p.x, p.y, p.radius, 0, 2 * Math.PI, false);
 	this.ctx.fillStyle = p.color;
 	this.ctx.strokeStyle = p.border;
 	this.ctx.lineWidth = 8;
-	this.ctx.globalAlpha = 0.3;
+	this.ctx.globalAlpha = p.opacity;
 	this.ctx.fill();
 	this.ctx.stroke();
+	this.ctx.restore();
 
 };
 
-doubleSlit.prototype.createParticle = function(){
+doubleSlit.prototype.createParticle = function( opacity ){
 
 	var p = new particle();
 
@@ -109,11 +119,35 @@ doubleSlit.prototype.createParticle = function(){
 
 	p.radius = 2;
 	p.color = "snow";
-	p.border = "orchid";
+	p.border = "#ff1744";
+	p.opacity = ( opacity )? opacity : 0;
 
-	this.particles.push( p );
+	if( opacity )
+		this.particles.push( p );
+	else
+		this.particlesWithChangesToBeDone.push( p );
 
 };
+
+doubleSlit.prototype.updateParticle = function( p ){
+
+	var randomCenterMax = Math.round( this.randomGaussian() * this.xMaxes ); 
+	randomCenterMax = ( randomCenterMax > this.xMaxes || randomCenterMax < 0 )? 0 : randomCenterMax; 
+
+	p.x = 
+		( this.centerOfScreenX ) + 
+		( this.distancesToXMax[ randomCenterMax ] * this.randomPositiveOrNegative() * this.scaleFactorX ) + 
+		( this.randomPositiveOrNegative() * ( ( this.xMaxes - randomCenterMax ) * this.randomGaussian() ) * 10 );
+
+	p.y = 
+		( this.centerOfScreenY ) + 
+		( this.randomGaussian() * 10 * this.randomPositiveOrNegative() ) * 
+		this.scaleFactorY;
+
+	p.radius = 2;
+
+};
+
 
 doubleSlit.prototype.removeParticle = function(){
 
@@ -135,32 +169,72 @@ doubleSlit.prototype.clearCanvas = function(){
 
 doubleSlit.prototype.update = function( time ){
 
+	//console.log( this.WANTED_FRAME_TIME )
+
 	this.now = Date.now();
-	if( this.last_time + time - this.now > this.WANTED_FRAME_TIME ){
-		this.render();
+
+	var delta = 0;
+	var lostTime = 0;
+	
+	if( time !== 0 ){
+		delta = this.now - this.last_render;
+		//console.log( delta )
+		if( delta >= this.WANTED_FRAME_TIME ){
+			this.render( delta );
+			this.changeParticleOpacity( delta );
+			this.last_render = this.now; //+ ( delta - this.WANTED_FRAME_TIME );
+		}
+	}else{
+		this.last_render = this.now;
 	}
-	this.last_time = this.now;
+	
 	if( !this.stop_anim )
 		requestAnimationFrame(this.update.bind(this));
 };
 
-doubleSlit.prototype.render = function(){
+doubleSlit.prototype.render = function( delta ){
 
 	this.clearCanvas();
-	this.createParticle();
-	this.removeParticle();
+	this.drawBackground();
+
+	for (var i = 0; i < 2; i++) {
+		this.createParticle();
+		this.removeParticle();	
+	}
+	
 	for (var i = 0; i < this.particles.length; i++) {
 		this.drawCircleInXMax( this.particles[i] );
 	}
 
+	for (var i = 0; i < this.particlesWithChangesToBeDone.length; i++) {
+		this.drawCircleInXMax( this.particlesWithChangesToBeDone[i] );
+	}
+
+	
+
 };
 
-doubleSlit.prototype.drawBackground = function(){
+doubleSlit.prototype.drawBackground = function( delta ){
 
-
+	this.ctx.fillStyle = this.gradient;
+	this.ctx.fillRect( 0, 0, this.width, this.height );
 
 };
 
+doubleSlit.prototype.changeParticleOpacity = function( delta ){
+
+	for (var i = 0; i < this.particlesWithChangesToBeDone.length; i++) {
+		
+		if( this.particlesWithChangesToBeDone[i].opacity < this.MAX_OPACITY ){
+			this.particlesWithChangesToBeDone[i].opacity += ( 0.01 );
+		}else{
+			var particleToMove = this.particlesWithChangesToBeDone.splice( i, 1 );
+			this.particles.push( particleToMove[0] );
+			i--;
+		}
+	}
+
+};
 
 doubleSlit.prototype.randomGaussian = function( mean, standardDeviation ) {
 
@@ -187,6 +261,42 @@ doubleSlit.prototype.randomGaussian = function( mean, standardDeviation ) {
 		return (v1 * multiplier * standardDeviation) + mean;
 	}
  
+};
+
+doubleSlit.prototype.setGradient = function(){
+
+	this.gradient = this.ctx.createLinearGradient( 0, 0, this.width, this.height );
+	this.gradient.addColorStop( 0, "#F29492" );
+	this.gradient.addColorStop( 1, "#114357" );
+
+};
+
+doubleSlit.prototype.onResizeWindow = function(){
+
+	this.ctx.canvas.width  = this.width = window.innerWidth;
+  	this.ctx.canvas.height = this.height = window.innerHeight;
+
+	this.centerOfScreenX = this.width / 2;
+	this.centerOfScreenY = this.height / 2;
+
+  	var percX = this.ctx.canvas.width / 1103;
+  	var percY = this.ctx.canvas.height / 1093;
+
+  	console.log( percX, percY )
+
+  	this.scaleFactorX = 190000 * percX;
+	this.scaleFactorY = 18 * percY;
+
+	this.setGradient();
+
+	for (var i = 0; i < this.particles.length; i++) {
+		this.updateParticle( this.particles[i] );
+	}
+
+	for (var i = 0; i < this.particlesWithChangesToBeDone.length; i++) {
+		this.updateParticle( this.particlesWithChangesToBeDone[i] );
+	}
+
 };
 
 
