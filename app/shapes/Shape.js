@@ -4,6 +4,7 @@ var Shape = function( elem, id ){
   this.domElement;
   this.childs = [];
   this.classes = '';
+  this.props = {};
   this.parent;
   this.needsRender = true;
   
@@ -171,6 +172,16 @@ Shape.prototype.setId = function( id ){
 
   if( this.id )
     this.domElement.id = this.id;
+
+};
+
+Shape.prototype.setDomProp = function( prop, value ){
+
+  if( typeof prop !== 'string' )
+    throw 'props should be string literals';    
+
+  this.props[ prop ] = value;
+
 
 };
 

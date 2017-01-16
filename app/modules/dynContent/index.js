@@ -35,18 +35,22 @@ dynContent.prototype.createName = function() {
 	var lToAbout = new TextShape( 'a' );
 	lToAbout.updateText( 'about' );
 	lToAbout.setClass( styles.lTo );
+	lToAbout.setDomProp( 'href', '#' );
 
 	var lToBlog = new TextShape( 'a' );
 	lToBlog.updateText( 'blog' );
 	lToBlog.setClass( styles.lTo );
+	lToBlog.setDomProp( 'href', 'http://blog.t3x.me' );
 
 	var lToGit = new TextShape( 'a' );
 	lToGit.updateText( 'git' );
 	lToGit.setClass( styles.lTo );
+	lToGit.setDomProp( 'href', 'https://github.com/j0t3x' );
 
 	var lToProjects = new TextShape( 'a' );
 	lToProjects.updateText( 'projects' );
 	lToProjects.setClass( styles.lTo );
+	lToProjects.setDomProp( 'href', '#' );
 
 
 

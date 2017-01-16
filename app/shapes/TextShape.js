@@ -22,6 +22,9 @@ TextShape.prototype.buildDom = function(){
   if( this.classes )
     this.domElement.className += ' ' + this.classes;
 
+  for ( var prop in this.props ) {
+    this.domElement[prop] = this.props[ prop ];
+  }
 
 };
 
@@ -41,6 +44,10 @@ TextShape.prototype.render_ = function(){
 
   if( this.textContent )
     this.domElement.innerHTML = this.textContent;
+
+  for ( var prop in this.props ) {
+    this.domElement[prop] = this.props[ prop ];
+  }
 
 };
 

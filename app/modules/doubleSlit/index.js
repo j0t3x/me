@@ -22,6 +22,7 @@ var doubleSlit = function( canvas ){
 	this.maxXlambda = 1;
 	this.scaleFactorX = 190000;
 	this.scaleFactorY = 18;
+	this.scaleFactorRadius = 1;
 
 	this.nmToM = Math.pow( 10, -9 );
 	this.mmToM = Math.pow( 10, -3 );
@@ -29,7 +30,7 @@ var doubleSlit = function( canvas ){
 	this.xMaxes = 4;
 	this.distancesToXMax = [];
 
-	this.particleNum = 3000;
+	this.particleNum = 2500;
 	this.particles = [];
 	this.particlesWithChangesToBeDone = [];
 
@@ -117,7 +118,7 @@ doubleSlit.prototype.createParticle = function( opacity ){
 		( this.randomGaussian() * 10 * this.randomPositiveOrNegative() ) * 
 		this.scaleFactorY;
 
-	p.radius = 2;
+	p.radius = 2 * this.scaleFactorRadius;
 	p.color = "snow";
 	p.border = "#ff1744";
 	p.opacity = ( opacity )? opacity : 0;
@@ -144,7 +145,7 @@ doubleSlit.prototype.updateParticle = function( p ){
 		( this.randomGaussian() * 10 * this.randomPositiveOrNegative() ) * 
 		this.scaleFactorY;
 
-	p.radius = 2;
+	p.radius = 2 * this.scaleFactorRadius;
 
 };
 
@@ -197,7 +198,7 @@ doubleSlit.prototype.render = function( delta ){
 	this.clearCanvas();
 	this.drawBackground();
 
-	for (var i = 0; i < 2; i++) {
+	for (var i = 0; i < 20; i++) {
 		this.createParticle();
 		this.removeParticle();	
 	}
@@ -210,7 +211,7 @@ doubleSlit.prototype.render = function( delta ){
 		this.drawCircleInXMax( this.particlesWithChangesToBeDone[i] );
 	}
 
-	
+	this.drawProjectVersion();	
 
 };
 
@@ -282,10 +283,10 @@ doubleSlit.prototype.onResizeWindow = function(){
   	var percX = this.ctx.canvas.width / 1103;
   	var percY = this.ctx.canvas.height / 1093;
 
-  	console.log( percX, percY )
-
   	this.scaleFactorX = 190000 * percX;
 	this.scaleFactorY = 18 * percY;
+	this.scaleFactorRadius = percX; 
+	//console.log( this.scaleFactorRadius )
 
 	this.setGradient();
 
@@ -296,6 +297,17 @@ doubleSlit.prototype.onResizeWindow = function(){
 	for (var i = 0; i < this.particlesWithChangesToBeDone.length; i++) {
 		this.updateParticle( this.particlesWithChangesToBeDone[i] );
 	}
+
+};
+
+doubleSlit.prototype.drawProjectVersion = function(){
+
+	this.ctx.save();
+	this.ctx.font = "12px serif";
+	this.ctx.strokeStyle = 'white';
+	this.ctx.globalAlpha = 0.3;
+	this.ctx.strokeText("1.0", this.width - 25, this.height - 10);
+	this.ctx.restore();
 
 };
 
