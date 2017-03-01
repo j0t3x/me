@@ -25,7 +25,7 @@ dynContent.prototype.createName = function() {
 
 	var aka = new TextShape( 'span' );
 	aka.updateText( 'a.k.a. Tex' );
-	aka.setClass( styles.inline );
+	aka.setClass( styles.aka );
 
 	this.myDescription = new TextShape( 'h2' );
 	this.myDescription.updateText(' Engineer | Product Manager ');
@@ -40,7 +40,7 @@ dynContent.prototype.createName = function() {
 	var lToBlog = new TextShape( 'a' );
 	lToBlog.updateText( 'blog' );
 	lToBlog.setClass( styles.lTo );
-	lToBlog.setDomProp( 'href', 'http://blog.t3x.me' );
+	lToBlog.setDomProp( 'href', 'https://tex.tech.blog/?p=20' );
 
 	var lToGit = new TextShape( 'a' );
 	lToGit.updateText( 'git' );
@@ -58,10 +58,10 @@ dynContent.prototype.createName = function() {
 	this.root.appendShape( aka );
 	this.root.appendShape( this.myDescription );
 
-	this.root.appendShape( lToAbout );
+	//this.root.appendShape( lToAbout );
 	this.root.appendShape( lToBlog );
 	this.root.appendShape( lToGit );
-	this.root.appendShape( lToProjects );
+	//this.root.appendShape( lToProjects );
 
 
 };
