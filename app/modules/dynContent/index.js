@@ -20,7 +20,7 @@ dynContent.prototype.init = function() {
 dynContent.prototype.createName = function() {
 
 	this.myName = new TextShape( 'h1' );
-	this.myName.updateText('Jose. M. Palacios');
+	this.myName.updateText('Jose M. Palacios');
 	this.myName.setClass( styles.name );
 
 	var aka = new TextShape( 'span' );
@@ -28,7 +28,7 @@ dynContent.prototype.createName = function() {
 	aka.setClass( styles.aka );
 
 	this.myDescription = new TextShape( 'h2' );
-	this.myDescription.updateText(' Engineer | Product Manager ');
+	this.myDescription.updateText('Back-End Developer');
 	this.myDescription.setClass( styles.desc );
 
 

@@ -9,13 +9,13 @@
 	font-size: 6vh;
 	color: #f5f5f5;
 	margin: 0;
-	font-family: 'Racing Sans One', cursive;
+	font-family: 'Lalezar', cursive;
 	display: inline;
-	letter-spacing: .15em;
+
 }
 
 .aka{
-	font-family: 'Kreon', serif;
+	font-family: 'Suez One', serif;
 	margin-left: 10px;
 	color: #f5f5f5;
 	font-size: 1.5vh;
@@ -24,13 +24,13 @@
 .desc {
 	margin: 0;
 	margin-bottom: 5%;
-	font-family: 'Kreon', serif;
+	font-family: 'Suez One', serif;
 	font-size: 3vh;
 	color: #f5f5f5;
 }
 
 .lTo {
-	font-family: 'Kreon', serif;
+	font-family: 'Suez One', serif;
 	color: #e3f2fd;
 	margin-right: 20px;
 	font-size: 2vh;

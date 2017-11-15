@@ -4,6 +4,21 @@ var doubleSlit = function( canvas ){
 
 	this.ctx = canvas.getContext("2d");
 
+	this.colors = new Array(
+	  [62,35,255],
+	  [60,255,60],
+	  [255,35,98],
+	  [45,175,230],
+	  [255,0,255],
+	  [255,128,0]);
+
+	this.colorIndices = [ 0,1,2,3 ];
+	this.colorChangeCounter = 0;
+	this.COLOR_CHANGE_TIME = 1;
+
+	this.dotColor = 'black';
+	this.dotBorder = 'darkgrey';
+
 	this.ctx.canvas.width  = window.innerWidth;
   	this.ctx.canvas.height = window.innerHeight;
 
@@ -102,8 +117,8 @@ doubleSlit.prototype.drawCircleInXMax = function( p ){
 	this.ctx.save();
 	this.ctx.beginPath();
 	this.ctx.arc(p.x, p.y, p.radius, 0, 2 * Math.PI, false);
-	this.ctx.fillStyle = p.color;
-	this.ctx.strokeStyle = p.border;
+	this.ctx.fillStyle = this.dotColor //p.color;
+	this.ctx.strokeStyle = this.dotBorder //p.border;
 	this.ctx.lineWidth = 6;
 	this.ctx.globalAlpha = p.opacity;
 	this.ctx.fill();
@@ -292,17 +307,51 @@ doubleSlit.prototype.calculateNextColorStepForGradient = function( delta ){
 	if( delta > 1000 )
 		return;
 
-	this.seed += delta/10000;
+	delta *= .0002;
+	this.seed += delta;
+	var istep = 1 - this.seed;
+	var c0_0 = this.colors[this.colorIndices[0]];
+	var c0_1 = this.colors[this.colorIndices[1]];
+	var c1_0 = this.colors[this.colorIndices[2]];
+	var c1_1 = this.colors[this.colorIndices[3]];
 
-	this.fg0.r = Math.sin( this.seed ) * Math.abs( this.gradient0.r - this.gradientf0.r );
-	this.fg0.g = Math.cos( this.seed ) * Math.abs( this.gradient0.g - this.gradientf0.g );
-	this.fg0.b = Math.sin( this.seed ) * Math.abs( this.gradient0.b - this.gradientf0.b );
+	var r1 = Math.round(istep * c0_0[0] + this.seed * c0_1[0]);
+	var g1 = Math.round(istep * c0_0[1] + this.seed * c0_1[1]);
+	var b1 = Math.round(istep * c0_0[2] + this.seed * c0_1[2]);
 
-	this.fg1.r = Math.cos( this.seed ) * Math.abs( this.gradient1.r - this.gradientf1.r );
-	this.fg1.g = Math.sin( this.seed ) * Math.abs( this.gradient1.g - this.gradientf1.g );
-	this.fg1.b = Math.cos( this.seed ) * Math.abs( this.gradient1.b - this.gradientf1.b );
+	var r2 = Math.round(istep * c1_0[0] + this.seed * c1_1[0]);
+	var g2 = Math.round(istep * c1_0[1] + this.seed * c1_1[1]);
+	var b2 = Math.round(istep * c1_0[2] + this.seed * c1_1[2]);
+
+
+	this.fg0.r = r1
+	this.fg0.g = g1
+	this.fg0.b = b1
+
+	this.fg1.r = r2
+	this.fg1.g = g2
+	this.fg1.b = b2
 
 	this.setGradient();
+
+	if( this.seed >= this.COLOR_CHANGE_TIME ){
+		this.seed = 0;
+
+		this.colorIndices[0] = this.colorIndices[1];
+		this.colorIndices[2] = this.colorIndices[3];
+
+		//pick two new target color indices
+		//do not pick the same as the current one
+		this.colorIndices[1] = ( 
+			this.colorIndices[1] + Math.floor( 1 + Math.random() * 
+				(this.colors.length - 1))) % this.colors.length;
+		this.colorIndices[3] = ( 
+			this.colorIndices[3] + Math.floor( 1 + Math.random() * 
+				(this.colors.length - 1))) % this.colors.length;
+
+	}
+
+
 
 
 
@@ -342,7 +391,7 @@ doubleSlit.prototype.drawProjectVersion = function(){
 	this.ctx.font = "11px serif";
 	this.ctx.strokeStyle = 'white';
 	this.ctx.globalAlpha = 0.3;
-	this.ctx.strokeText("1.1", this.width - 25, this.height - 10);
+	this.ctx.strokeText("1.2", this.width - 25, this.height - 10);
 	this.ctx.restore();
 
 };
